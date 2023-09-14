@@ -136,6 +136,6 @@ function FunctionService.AutoFillPlayer(msg)
 end
 
 
-
+FunctionService.Report("Temp's FunctionService Module Loaded, took "..FunctionService.percentround(os.clock()-start).." MS to complete.",FSLM)
 
 return FunctionService
