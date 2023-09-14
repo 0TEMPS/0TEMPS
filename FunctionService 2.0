@@ -2,6 +2,8 @@
     Welcome to Temp's Function Service, Enjoy.
     
     Docs : 
+    
+    Loadstring : local FS = loadstring(game:HttpGet("https://raw.githubusercontent.com/0TEMPS/0TEMPS/main/FunctionService%202.0"))()
 ]]
 
 -- // Start \\ --
@@ -92,7 +94,7 @@ function FunctionService.AutoFillPlayer(msg)
 		warn("⚠️ FunctionService.AutoFillPlayer Error : "..info.." ("..returnstring..")")
 	end
 
-	return returnstring
+	return Players[returnstring]
 end
 
 
