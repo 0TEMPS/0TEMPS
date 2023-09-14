@@ -1,0 +1,99 @@
+--[[
+    Welcome to Temp's Function Service, Enjoy.
+    
+    Docs : 
+]]
+
+-- // Start \\ --
+local start = os.clock()
+local RequestTime = os.date
+local StartupTime = RequestTime "%I" .. ":" .. RequestTime "%M" .. RequestTime "%p"
+local TotalCalls = 0
+
+-- // Services \\ -- 
+local Players = game:GetService("Players")
+local TPS = game:GetService("TeleportService")
+local MS = game:GetService("MarketplaceService")
+local HTTPS = game:GetService("HttpService")
+local PFS = game:GetService("PathfindingService")
+local TextChatService = game:GetService("TextChatService")
+
+local Player = Players.LocalPlayer
+local PN = Player.Name
+local CHAR = Player.Character
+local HUMAN = CHAR.Humanoid
+local HRP = CHAR.HumanoidRootPart
+
+local REQUEST = (syn and syn.request) or (http and http.request) or http_request
+FSRC = FS_Report_Chat
+FSLM = FS_Loading_Messages
+
+local PLACENAME = MS:GetProductInfo(game.PlaceId).Name
+
+local RoliTableLoaded = false
+local RolimonsItemTable
+
+if game:FindFirstChild("TextChatService") then
+	if TextChatService:FindFirstChild("TextChannels") then
+		ChatServiceType = "TCS"
+	else
+		ChatServiceType = "LCS"
+		SayMessageReq = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest")
+	end
+end
+
+local abbreviations = {
+	["K"] = 4,
+	["M"] = 7,
+	["B"] = 10,
+	["T"] = 13,
+	["Qd"] = 17,
+	["Qn"] = 20,
+}
+
+function findUser(strng)
+	local Found = false
+	local PartialName = strng
+	local foundPlayer
+	local Players = game.Players:GetPlayers()
+	for i = 1, #Players do
+		local CurrentPlayer = Players[i]
+		if string.lower(CurrentPlayer.Name):sub(1, #PartialName) == string.lower(PartialName) then
+			foundPlayer = CurrentPlayer.Name
+			Found = true
+			
+			return foundPlayer
+		end
+	end
+	
+	if Found == false then
+		for i = 1, #Players do
+			local CurrentPlayer = Players[i]
+			if string.lower(CurrentPlayer.DisplayName):sub(1, #PartialName) == string.lower(PartialName) then
+				foundPlayer = CurrentPlayer.Name
+				break
+			end
+		end
+	end
+	
+	return foundPlayer
+end
+
+local FunctionService = {}
+
+function FunctionService.AutoFillPlayer(msg)
+	local args = string.split(msg, " ")
+	local player = args[#args]
+	local suc, info = pcall(findUser(player))
+	local returnstring = findUser(player)
+
+	if info == "attempt to call a nil value" then
+		returnstring = "Invalid username."
+		warn("⚠️ FunctionService.AutoFillPlayer Error : "..info.." ("..returnstring..")")
+	end
+
+	return returnstring
+end
+
+
+return FunctionService
