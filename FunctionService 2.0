@@ -3,7 +3,11 @@
     
     Docs : 
     
-    Loadstring : local FS = loadstring(game:HttpGet("https://raw.githubusercontent.com/0TEMPS/0TEMPS/main/FunctionService%202.0"))()
+    FSTABLE = {
+		["Chat_Loading_Messages"] = false,
+		["Chat_Report_Messages"] = false,
+	}
+	local FS = loadstring(game:HttpGet("https://raw.githubusercontent.com/0TEMPS/0TEMPS/main/FunctionService%202.0"))()
 ]]
 
 -- // Start \\ --
@@ -27,8 +31,12 @@ local HUMAN = CHAR.Humanoid
 local HRP = CHAR.HumanoidRootPart
 
 local REQUEST = (syn and syn.request) or (http and http.request) or http_request
-FSRC = FS_Report_Chat
-FSLM = FS_Loading_Messages
+
+FSRC = FSSettings["Chat_Report_Messages"]
+FSLM = FSSettings["Chat_Loading_Messages"]
+
+ApprovalWords = FSSettings["APPROVAL_WORDS"]
+DisapprovalWords = FSSettings["DISAPPROVAL_WORDS"]
 
 local PLACENAME = MS:GetProductInfo(game.PlaceId).Name
 
@@ -83,6 +91,36 @@ end
 
 local FunctionService = {}
 
+function FunctionService.Report(msg,ChatLogsPublic)
+	if ChatServiceType == "LCS" then
+		if ChatLogsPublic == true then
+			local args = {
+				[1] = msg,
+				[2] = "All"
+			}
+
+			SayMessageReq:FireServer(unpack(args))
+			print(msg)
+		else
+			print(msg)
+		end
+	end
+	if ChatServiceType == "TCS" then
+		if ChatLogsPublic == true then
+			local TextChannels = TextChatService:WaitForChild("TextChannels")
+
+			TextChannels.RBXGeneral:SendAsync(msg)
+			print(msg)
+		else
+			print(msg)
+		end
+	end
+end
+
+function FunctionService.ActiveCheck()
+	FunctionService.Report("FunctionService (V2.0.0) is active.",FSLM)
+end
+
 function FunctionService.AutoFillPlayer(msg)
 	local args = string.split(msg, " ")
 	local player = args[#args]
@@ -90,12 +128,14 @@ function FunctionService.AutoFillPlayer(msg)
 	local returnstring = findUser(player)
 
 	if info == "attempt to call a nil value" then
-		returnstring = "Invalid username."
+		returnstring = "Invalid username"
 		warn("⚠️ FunctionService.AutoFillPlayer Error : "..info.." ("..returnstring..")")
 	end
 
-	return Players[returnstring]
+	return returnstring
 end
+
+
 
 
 return FunctionService
